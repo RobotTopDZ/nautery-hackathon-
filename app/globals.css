@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet CSS */
+@import 'leaflet/dist/leaflet.css';
+
+@layer base {
+  :root {
+    --background: #0A2342;
+    --card: #1E3D59;
+    --primary: #4CB5F5;
+    --hover: #00B8A9;
+    --alert: #FF6B6B;
+    --neutral: #EAEAEA;
+    --light: #F6F5F5;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-gray-700;
+  }
+  body {
+    @apply bg-background text-neutral;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .kpi-card {
+    @apply bg-card rounded-lg p-6 border border-gray-700/50 hover:border-primary/50 transition-colors;
+  }
+  
+  .kpi-value {
+    @apply text-2xl font-bold text-primary;
+  }
+  
+  .kpi-label {
+    @apply text-sm text-neutral/70 mt-1;
+  }
+  
+  .trend-up {
+    @apply text-green-400;
+  }
+  
+  .trend-down {
+    @apply text-red-400;
+  }
+  
+  .trend-stable {
+    @apply text-yellow-400;
+  }
+  
+  .alert-high {
+    @apply bg-alert/20 border-alert text-alert;
+  }
+  
+  .alert-medium {
+    @apply bg-orange-500/20 border-orange-500 text-orange-500;
+  }
+  
+  .alert-low {
+    @apply bg-green-500/20 border-green-500 text-green-500;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover);
+}
+
+/* Leaflet map dark theme overrides */
+.leaflet-container {
+  background: var(--background) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: var(--card) !important;
+  color: var(--neutral) !important;
+  border-radius: 8px !important;
+}
+
+.leaflet-popup-tip {
+  background: var(--card) !important;
+}
+
+/* Pulse animation for high pollution markers */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pulse-marker {
+  animation: pulse 2s infinite;
+}
+
+/* Custom zoom control styles */
+.custom-zoom-control {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.custom-zoom-control button:hover {
+  transform: scale(1.1);
+}
+
+/* Mobile navigation enhancements */
+@media (max-width: 768px) {
+  .mobile-nav-active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Interactive elements */
+.interactive-card {
+  @apply transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer;
+}
+
+.interactive-card:active {
+  @apply scale-95;
+}
+
+/* Region selector animations */
+.region-button {
+  @apply transition-all duration-200 hover:bg-primary/10 active:scale-95;
+}
+
+.region-button.selected {
+  @apply bg-primary/20 border-primary shadow-lg;
+}
+
+/* Loading animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Responsive text sizes */
+@media (max-width: 640px) {
+  .responsive-text {
+    @apply text-sm;
+  }
+  
+  .responsive-title {
+    @apply text-lg;
+  }
+}
+
+/* Custom map markers for Toulon interactive map */
+.station-marker {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 3px solid white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.station-marker svg {
+  transform: rotate(45deg);
+}
+
+.rejection-marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-rejection 2s infinite;
+}
+
+.zone-marker {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid white;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(45deg);
+}
+
+.zone-marker svg {
+  transform: rotate(-45deg);
+}
+
+.site-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes pulse-rejection {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Custom popup styles for Toulon map */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.leaflet-popup-tip {
+  border-radius: 4px !important;
+}
+
+/* Hover effects for interactive elements */
+.custom-station-icon:hover .station-marker {
+  transform: rotate(-45deg) scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.custom-zone-icon:hover .zone-marker {
+  transform: rotate(45deg) scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.custom-site-icon:hover .site-marker {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+.custom-rejection-icon:hover .rejection-marker {
+  animation-duration: 1s;
+}
