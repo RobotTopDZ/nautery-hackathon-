@@ -923,34 +923,37 @@ Station GAPEAU
                   setSelectedRisk(selectedRisk?.id === risk.id ? null : risk);
                 }}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between space-y-3 md:space-y-0">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-2 mb-2">
-                      <Factory className="h-4 w-4 text-blue-400" />
-                      <span className="font-medium text-white">{risk.location}</span>
+                      <Factory className="h-4 w-4 text-blue-400 flex-shrink-0" />
+                      <span className="font-medium text-white truncate">{risk.location}</span>
                       {getTrendIcon(risk.trend)}
-                      <div className="ml-auto flex items-center text-blue-400">
-                        <span className="text-xs mr-1 md:hidden">Appuyer pour détails</span>
-                        <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${selectedRisk?.id === risk.id ? 'rotate-180' : ''}`} />
-                      </div>
                     </div>
                     <div className="text-sm text-gray-300 mb-2">
                       <strong>{risk.pollutant}</strong>
                     </div>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-gray-400 break-words">
                       Concentration: {risk.concentration} µg/L (Max: {risk.maxThreshold} µg/L)
                     </div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="text-xs text-gray-500 mt-1 break-words">
                       Région: {risk.region}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge className={`${getRiskColor(risk.level)} text-white mb-2`}>
+                  <div className="flex items-center justify-between md:flex-col md:items-end md:text-right md:ml-4 flex-shrink-0">
+                    <Badge className={`${getRiskColor(risk.level)} text-white mb-0 md:mb-2 text-xs px-2 py-1`}>
                       {risk.level}
                     </Badge>
                     <div className="text-sm font-medium text-white">
-                      Niveau {risk.levelNumber}
+                      Niveau {risk.levelNumber}/5
                     </div>
+                    <div className="flex items-center text-blue-400 md:hidden ml-2">
+                      <span className="text-xs mr-1">Détails</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${selectedRisk?.id === risk.id ? 'rotate-180' : ''}`} />
+                    </div>
+                  </div>
+                  <div className="hidden md:flex items-center text-blue-400">
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${selectedRisk?.id === risk.id ? 'rotate-180' : ''}`} />
                   </div>
                 </div>
 

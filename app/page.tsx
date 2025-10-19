@@ -143,7 +143,7 @@ export default function Dashboard() {
                 ripple={true}
               >
                 <MapPin className="h-4 w-4 mr-2" />
-                Carte Détaillée Toulon
+                Carte
               </EnhancedButton>
             )}
           </div>
