@@ -42,7 +42,7 @@ export function MobileNavigation() {
   const pathname = usePathname()
 
   return (
-    <div className="md:hidden mobile-nav-fixed bg-white/98 backdrop-blur-md border-t border-gray-200/50 shadow-lg safe-area-inset-bottom">
+    <div className="md:hidden mobile-nav-fixed bg-white border-t border-gray-200 shadow-lg safe-area-inset-bottom">
       <div className="grid grid-cols-4 h-16 pb-safe">
         {mobileNavigation.map((item) => {
           const isActive = pathname === item.href
