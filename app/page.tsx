@@ -121,7 +121,6 @@ export default function Dashboard() {
       <div className="flex-1 lg:ml-0">
         <Header 
           title="Dashboard Ocean Analytics"
-          subtitle="Surveillance pollution marine en temps réel"
           showActions={true}
           onRefresh={fetchDashboardData}
           loading={loading}

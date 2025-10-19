@@ -70,7 +70,6 @@ export default function PredictionsPage() {
       <div className="flex-1 lg:ml-0">
         <Header 
           title="Prédictions IA"
-          subtitle="Modélisation avancée de diffusion des contaminants"
         />
 
         <div className="pt-20 container mx-auto px-6 py-6 mobile-content-padding">

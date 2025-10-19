@@ -13,7 +13,6 @@ export default function ToulonPage() {
       <div className="flex-1 lg:ml-0">
         <Header 
           title="Carte Interactive Toulon"
-          subtitle="Pollution Marine & Stations d'Épuration"
         />
 
         <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 mobile-content-padding">
