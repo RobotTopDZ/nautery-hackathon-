@@ -974,11 +974,8 @@ Station GAPEAU
               disabled={isGeneratingReport}
             >
               <FileText className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">
+              <span>
                 {isGeneratingReport ? 'Génération PDF...' : 'Générer Rapport PDF'}
-              </span>
-              <span className="sm:hidden">
-                {isGeneratingReport ? 'PDF...' : 'PDF'}
               </span>
             </Button>
           </div>
