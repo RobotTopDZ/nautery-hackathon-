@@ -114,7 +114,6 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
   const [currentTimeSlot, setCurrentTimeSlot] = useState(timeSlots[4]) // Décembre 2024 par défaut
   const [concentrationLevel, setConcentrationLevel] = useState<'low' | 'medium' | 'high'>('medium')
   const [showWindEffect, setShowWindEffect] = useState(true)
-  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     if (!mapRef.current) return
@@ -1152,167 +1151,16 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
   }
 
   return (
-    <>
-      {/* Mode plein écran pour la carte uniquement */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-50 bg-white flex flex-col">
-          {/* Header plein écran */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-            <div className="flex items-center space-x-2">
-              <MapIcon className="h-5 w-5 text-blue-400" />
-              <span className="font-semibold">Carte Interactive Toulon - Plein Écran</span>
-            </div>
-            <button
-              onClick={() => setIsFullscreen(false)}
-              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
-            >
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+    <Card className={`${className} bg-card/50 border-gray-700/50`}>
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <MapIcon className="h-5 w-5 text-blue-400" />
+            <span>Carte Interactive Toulon</span>
           </div>
-          
-          {/* Contrôles en plein écran */}
-          <div className="flex-1 flex">
-            {/* Sidebar contrôles */}
-            <div className="w-80 bg-gray-50 border-r border-gray-200 p-4 overflow-y-auto">
-              <div className="space-y-4">
-                {/* Style de carte */}
-                <div>
-                  <h4 className="text-sm font-medium mb-2 text-gray-700">Style de Carte</h4>
-                  <div className="grid grid-cols-1 gap-2">
-                    {['satellite', 'street', 'terrain'].map((style) => (
-                      <Button
-                        key={style}
-                        variant={mapStyle === style ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => changeMapStyle(style)}
-                        className="justify-start"
-                      >
-                        {style === 'satellite' && <Satellite className="h-4 w-4 mr-2" />}
-                        {style === 'street' && <MapIcon className="h-4 w-4 mr-2" />}
-                        {style === 'terrain' && <Layers className="h-4 w-4 mr-2" />}
-                        {style.charAt(0).toUpperCase() + style.slice(1)}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Période temporelle */}
-                <div>
-                  <h4 className="text-sm font-medium mb-2 text-gray-700">Période</h4>
-                  <select
-                    value={currentTimeSlot.id}
-                    onChange={(e) => {
-                      const slot = timeSlots.find(s => s.id === e.target.value)
-                      if (slot) setCurrentTimeSlot(slot)
-                    }}
-                    className="w-full p-2 border border-gray-300 rounded-lg text-sm"
-                  >
-                    {timeSlots.map(slot => (
-                      <option key={slot.id} value={slot.id}>{slot.label}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                {/* Niveau de concentration */}
-                <div>
-                  <h4 className="text-sm font-medium mb-2 text-gray-700">Niveau Pollution</h4>
-                  <div className="grid grid-cols-1 gap-2">
-                    {(['low', 'medium', 'high'] as const).map((level) => (
-                      <Button
-                        key={level}
-                        variant={concentrationLevel === level ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setConcentrationLevel(level)}
-                        className="justify-start"
-                      >
-                        {level === 'low' && '🟢 Faible'}
-                        {level === 'medium' && '🟡 Moyen'}
-                        {level === 'high' && '🔴 Élevé'}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Couches de données */}
-                <div>
-                  <h4 className="text-sm font-medium mb-2 text-gray-700">Couches</h4>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={showStations}
-                        onChange={(e) => setShowStations(e.target.checked)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">Stations</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={showPollution}
-                        onChange={(e) => setShowPollution(e.target.checked)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">Pollution</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={showPipelines}
-                        onChange={(e) => setShowPipelines(e.target.checked)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">Canalisations</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={showRejectionDispersion}
-                        onChange={(e) => setShowRejectionDispersion(e.target.checked)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">Dispersion</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={showWindEffect}
-                        onChange={(e) => setShowWindEffect(e.target.checked)}
-                        className="rounded"
-                      />
-                      <span className="text-sm">Effet Vent</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Carte plein écran */}
-            <div className="flex-1 relative">
-              <div 
-                ref={mapRef} 
-                className="w-full h-full"
-                style={{ zIndex: 1 }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Mode normal */}
-      {!isFullscreen && (
-        <Card className={`${className} bg-card/50 border-gray-700/50`}>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <MapIcon className="h-5 w-5 text-blue-400" />
-                <span>Carte Interactive Toulon</span>
-              </div>
-              <Badge className="bg-green-600">Données Géolocalisées</Badge>
-            </CardTitle>
-          </CardHeader>
+          <Badge className="bg-green-600">Données Géolocalisées</Badge>
+        </CardTitle>
+      </CardHeader>
       <CardContent className="space-y-4">
         {/* Contrôles Mobile-Friendly */}
         <div className="space-y-4">
@@ -1454,34 +1302,11 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
         </div>
 
         {/* Carte */}
-        <div className="relative">
-          <div 
-            ref={mapRef} 
-            className={`w-full rounded-lg border border-gray-700/50 relative overflow-hidden ${
-              isFullscreen 
-                ? 'h-[calc(100vh-200px)]' 
-                : 'h-[400px] md:h-[500px]'
-            }`}
-            style={{ zIndex: 1 }}
-          />
-          
-          {/* Bouton plein écran intégré dans la carte */}
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="absolute top-3 right-3 z-10 p-2 bg-white/90 hover:bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-200 hover:shadow-xl"
-            title={isFullscreen ? "Quitter le plein écran" : "Mode plein écran"}
-          >
-            {isFullscreen ? (
-              <svg className="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-              </svg>
-            )}
-          </button>
-        </div>
+        <div 
+          ref={mapRef} 
+          className="w-full h-[400px] md:h-[500px] rounded-lg border border-gray-700/50 relative overflow-hidden"
+          style={{ zIndex: 1 }}
+        />
 
         {/* Légende */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-900 text-white rounded-lg border border-gray-700">
@@ -1701,8 +1526,6 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
           filter: brightness(1.1) saturate(1.2);
         }
       `}</style>
-        </Card>
-      )}
-    </>
+    </Card>
   )
 }
