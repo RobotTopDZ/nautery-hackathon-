@@ -7,6 +7,7 @@ import { ToulonRiskAssessment } from '@/components/dashboard/ToulonRiskAssessmen
 import { RegionSelector, Region, regions } from '@/components/RegionSelector'
 import { MobileNavigation } from '@/components/MobileNavigation'
 import { Navigation } from '@/components/Navigation'
+import { Logo } from '@/components/Logo'
 import { generateRegionalKPIs, getRegionDisplayInfo } from '@/utils/regionKPIs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -118,17 +119,7 @@ export default function Dashboard() {
         <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-40 lg:pl-4">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">NM</span>
-              </div>
-              <div>
-                <h1 className="text-xl md:text-2xl font-bold text-primary">Nautery Monitor</h1>
-                <p className="text-xs md:text-sm text-neutral/70">
-                  Ocean Pollution Analytics Platform
-                </p>
-              </div>
-            </div>
+            <Logo size="xl" />
             <div className="flex items-center space-x-4">
               <div className="hidden md:block text-xs text-neutral/50">
                 Dernière mise à jour: {lastUpdate.toLocaleTimeString()}

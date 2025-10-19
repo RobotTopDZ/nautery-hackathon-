@@ -6,6 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Brain, Target } from 'lucide-react'
 import Link from 'next/link'
+import { Navigation } from '@/components/Navigation'
+import { Logo } from '@/components/Logo'
+import { MobileNavigation } from '@/components/MobileNavigation'
 
 export default function PredictionsPage() {
   // Sample prediction scenarios
@@ -59,30 +62,29 @@ export default function PredictionsPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link href="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-primary">🔮 ML Predictions</h1>
-                <p className="text-sm text-neutral/70">
+    <div className="min-h-screen bg-background flex">
+      {/* Navigation */}
+      <Navigation />
+      
+      <div className="flex-1 lg:ml-0">
+        {/* Header */}
+        <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-40 lg:pl-4">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex items-center justify-between">
+              <Logo size="xl" />
+              <div className="text-right">
+                <h1 className="text-lg md:text-xl font-bold text-primary">
+                  Prédictions IA
+                </h1>
+                <p className="text-xs md:text-sm text-neutral/70">
                   Advanced contaminant diffusion modeling & risk assessment
                 </p>
               </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className="container mx-auto px-6 py-6">
+        <div className="container mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Prediction Tool */}
           <div className="lg:col-span-1">
@@ -195,6 +197,9 @@ export default function PredictionsPage() {
             </Card>
           </div>
         </div>
+        </div>
+        
+        <MobileNavigation />
       </div>
     </div>
   )
