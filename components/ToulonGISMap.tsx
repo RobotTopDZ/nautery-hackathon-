@@ -187,11 +187,37 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
   }, [])
 
   useEffect(() => {
-    if (!mapInstanceRef.current) return
-    
-    import('leaflet').then((L) => {
-      updateLayers(L)
-    })
+    // Ajouter les styles CSS pour les popups modernes
+    const style = document.createElement('style')
+    style.textContent = `
+      .modern-popup-container .leaflet-popup-content-wrapper {
+        background: transparent !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .modern-popup-container .leaflet-popup-content {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .modern-popup-container .leaflet-popup-tip {
+        background: white !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+      }
+      .modern-popup {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+    `
+    document.head.appendChild(style)
+
+    if (typeof window !== 'undefined') {
+      import('leaflet').then((L) => {
+        if (mapRef.current && !mapInstanceRef.current) {
+          updateLayers(L)
+        }
+      })
+    }
   }, [showStations, showPollution, showPipelines, showRejectionDispersion, currentTimeSlot, concentrationLevel, showWindEffect])
 
   // Fonction pour calculer la distance entre deux points GPS
@@ -427,17 +453,49 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
         smoothFactor: 2.0 // Lissage supplémentaire de Leaflet
       })
       
-      // Popup avec infos détaillées
+      // Popup moderne pour zone de dispersion avec prédiction
+      const riskLevel = finalConcentration > 2.0 ? 'CRITIQUE' : finalConcentration > 1.0 ? 'ÉLEVÉ' : finalConcentration > 0.5 ? 'MODÉRÉ' : 'FAIBLE'
+      const riskColor = finalConcentration > 2.0 ? '#ef4444' : finalConcentration > 1.0 ? '#f97316' : finalConcentration > 0.5 ? '#eab308' : '#22c55e'
+      
       polygon.bindPopup(`
-        <div class="p-2 text-xs">
-          <h4 class="font-bold text-blue-600">${station.stationName}</h4>
-          <p><strong>Dispersion niveau ${index + 1}</strong></p>
-          <p>Concentration: ${finalConcentration.toFixed(2)} ng/L</p>
-          <p>Distance: ${layer.distance}m</p>
-          <p>Vent: ${timeSlot.windDirection}° - ${timeSlot.windSpeed} km/h</p>
-          <p>Capacité station: ${station.capacity?.toLocaleString()} m³/j</p>
+        <div class="modern-popup bg-white rounded-xl shadow-2xl border-0 p-4 min-w-[280px]">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-bold text-gray-800">Prédiction Zone</h3>
+            <div class="px-3 py-1 rounded-full text-xs font-semibold text-white" style="background-color: ${riskColor}">
+              ${riskLevel}
+            </div>
+          </div>
+          
+          <div class="space-y-3">
+            <div class="bg-blue-50 rounded-lg p-3">
+              <div class="text-sm text-gray-600 mb-1">Concentration Prédite</div>
+              <div class="text-2xl font-bold text-blue-600">${finalConcentration.toFixed(2)} ng/L</div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div class="text-center">
+                <div class="text-xs text-gray-500">Distance Source</div>
+                <div class="font-semibold text-gray-800">${layer.distance}m</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xs text-gray-500">Niveau Dispersion</div>
+                <div class="font-semibold text-gray-800">${index + 1}/6</div>
+              </div>
+            </div>
+            
+            <div class="border-t pt-3">
+              <div class="text-xs text-gray-500 mb-2">Conditions Environnementales</div>
+              <div class="flex justify-between text-sm">
+                <span>Vent: ${timeSlot.windDirection}° - ${timeSlot.windSpeed} km/h</span>
+              </div>
+            </div>
+          </div>
         </div>
-      `)
+      `, {
+        className: 'modern-popup-container',
+        maxWidth: 300,
+        closeButton: true
+      })
       
       polygon.addTo(layersRef.current.pollutionGroup)
     })
@@ -603,14 +661,44 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
         })
 
         marker.bindPopup(`
-          <div class="p-3">
-            <h4 class="font-bold" style="color: ${currentLevel.color}">${zone.name}</h4>
-            <p><strong>Niveau:</strong> ${concentrationLevel.toUpperCase()}</p>
-            <p><strong>Concentration:</strong> ${concentration.toFixed(2)} ng/L</p>
-            <p><strong>Période:</strong> ${currentTimeSlot.label}</p>
-            <p><strong>Vent:</strong> ${currentTimeSlot.windDirection}° - ${currentTimeSlot.windSpeed} km/h</p>
+          <div class="modern-popup bg-white rounded-xl shadow-2xl border-0 p-4 min-w-[300px]">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-lg font-bold text-gray-800">${zone.name}</h3>
+              <div class="px-3 py-1 rounded-full text-xs font-semibold text-white" style="background-color: ${currentLevel.color}">
+                ${concentrationLevel.toUpperCase()}
+              </div>
+            </div>
+            
+            <div class="space-y-3">
+              <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-lg p-3">
+                <div class="text-sm text-gray-600 mb-1">Concentration Mesurée</div>
+                <div class="text-2xl font-bold" style="color: ${currentLevel.color}">${concentration.toFixed(2)} ng/L</div>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-3">
+                <div class="text-center">
+                  <div class="text-xs text-gray-500">Période</div>
+                  <div class="font-semibold text-gray-800">${currentTimeSlot.label}</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-500">Type Zone</div>
+                  <div class="font-semibold text-gray-800">Pollution</div>
+                </div>
+              </div>
+              
+              <div class="border-t pt-3">
+                <div class="text-xs text-gray-500 mb-2">Conditions Météo</div>
+                <div class="flex justify-between text-sm">
+                  <span>Vent: ${currentTimeSlot.windDirection}° - ${currentTimeSlot.windSpeed} km/h</span>
+                </div>
+              </div>
+            </div>
           </div>
-        `)
+        `, {
+          className: 'modern-popup-container',
+          maxWidth: 320,
+          closeButton: true
+        })
 
         marker.on('click', () => setSelectedZone({...zone, currentLevel, concentration}))
         marker.addTo(layersRef.current.pollutionGroup)
@@ -728,15 +816,49 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
         const rejectionMarker = L.marker(station.rejectionPoint, { icon: rejectionIcon })
         
         rejectionMarker.bindPopup(`
-          <div class="p-3">
-            <h4 class="font-bold" style="color: ${rejectionColor}">Point de Rejet</h4>
-            <p><strong>Station:</strong> ${station.name}</p>
-            <p><strong>Débit:</strong> ${station.capacity.toLocaleString()} m³/jour</p>
-            <p><strong>Concentration:</strong> ${dynamicConcentration.toFixed(2)} ng/L</p>
-            <p><strong>Période:</strong> ${currentTimeSlot.label}</p>
-            <p><strong>Facteur:</strong> ×${currentTimeSlot.multiplier}</p>
+          <div class="modern-popup bg-white rounded-xl shadow-2xl border-0 p-5 min-w-[320px]">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-gray-800 flex items-center">
+                <div class="w-3 h-3 rounded-full mr-2" style="background-color: ${rejectionColor}"></div>
+                ${station.name}
+              </h3>
+              <div class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
+                STATION
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                <div class="text-sm text-gray-600 mb-1">Concentration Actuelle</div>
+                <div class="text-3xl font-bold text-blue-600">${dynamicConcentration.toFixed(2)} ng/L</div>
+                <div class="text-xs text-gray-500 mt-1">Facteur temporel: ×${currentTimeSlot.multiplier}</div>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <div class="text-xs text-gray-500 mb-1">Capacité</div>
+                  <div class="font-bold text-gray-800">${station.capacity.toLocaleString()}</div>
+                  <div class="text-xs text-gray-500">m³/jour</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3">
+                  <div class="text-xs text-gray-500 mb-1">Période</div>
+                  <div class="font-bold text-gray-800">${currentTimeSlot.label}</div>
+                </div>
+              </div>
+              
+              <div class="border-t pt-3">
+                <div class="text-xs text-gray-500 mb-2">Informations Techniques</div>
+                <div class="text-sm text-gray-700">
+                  Point de rejet principal pour le traitement des eaux usées de la zone
+                </div>
+              </div>
+            </div>
           </div>
-        `)
+        `, {
+          className: 'modern-popup-container',
+          maxWidth: 350,
+          closeButton: true
+        })
 
         rejectionMarker.addTo(layersRef.current.stationsGroup)
 
