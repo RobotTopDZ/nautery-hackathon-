@@ -967,19 +967,10 @@ Station GAPEAU
           </div>
 
           {/* Boutons d'action */}
-          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-6">
-            <Button 
-              onClick={handleEmergencyResponse}
-              className="bg-red-600 hover:bg-red-700 flex-1"
-              disabled={criticalCount === 0}
-            >
-              <Shield className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Réponse d'Urgence</span>
-              <span className="sm:hidden">Urgence</span>
-            </Button>
+          <div className="flex justify-center mt-6">
             <Button 
               onClick={generatePDFReport}
-              className="bg-blue-600 hover:bg-blue-700 flex-1"
+              className="bg-blue-600 hover:bg-blue-700 px-8"
               disabled={isGeneratingReport}
             >
               <FileText className="h-4 w-4 mr-2" />

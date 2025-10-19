@@ -57,9 +57,7 @@ export function Header({
       <div className="container mx-auto px-4 lg:px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="lg:hidden">
-              <Logo size="md" showText={false} />
-            </div>
+            <Logo size="md" showText={true} />
             {title && (
               <div>
                 <h1 className="text-lg md:text-xl font-bold text-gray-900">
@@ -93,13 +91,6 @@ export function Header({
                   {loading ? 'Chargement...' : 'Actualiser'}
                 </Button>
               )}
-              <Button 
-                size="sm" 
-                className="hidden md:flex bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Exporter
-              </Button>
             </div>
           )}
         </div>

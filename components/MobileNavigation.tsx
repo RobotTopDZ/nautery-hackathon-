@@ -29,6 +29,12 @@ const mobileNavigation = [
     href: '/toulon',
     icon: Map,
     color: 'text-green-400'
+  },
+  {
+    name: 'Alertes',
+    href: '#',
+    icon: AlertTriangle,
+    color: 'text-red-400'
   }
 ]
 
@@ -37,7 +43,7 @@ export function MobileNavigation() {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200/50 shadow-lg">
-      <div className="grid grid-cols-3 h-16">
+      <div className="grid grid-cols-4 h-16">
         {mobileNavigation.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon

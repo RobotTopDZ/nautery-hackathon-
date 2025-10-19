@@ -37,6 +37,12 @@ const navigation = [
     href: '/toulon',
     icon: Map,
     description: 'Carte Toulon GIS'
+  },
+  {
+    name: 'Alertes',
+    href: '#',
+    icon: AlertTriangle,
+    description: 'Système d\'alertes'
   }
 ]
 
@@ -62,7 +68,8 @@ export function Navigation() {
       <nav className="hidden lg:flex bg-card/50 backdrop-blur-sm border-r border-gray-700/50 w-64 min-h-screen p-4">
         <div className="space-y-2 w-full">
           <div className="px-3 py-2 mb-4">
-            <Logo size="lg" />
+            <h2 className="text-lg font-semibold text-primary">Navigation</h2>
+            <p className="text-xs text-neutral/70">Menu Principal</p>
           </div>
         
           {navigation.map((item) => {
@@ -106,7 +113,8 @@ export function Navigation() {
           <nav className="fixed left-0 top-0 h-full w-64 bg-card border-r border-gray-700/50 p-4">
             <div className="space-y-2 mt-16">
               <div className="px-3 py-2 mb-4">
-                <Logo size="lg" />
+                <h2 className="text-lg font-semibold text-primary">Navigation</h2>
+                <p className="text-xs text-neutral/70">Menu Principal</p>
               </div>
               
               {navigation.map((item) => {
