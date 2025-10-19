@@ -38,7 +38,7 @@ export class ContaminantDiffusionModel {
 
     // Generate synthetic training data based on physical principles
     for (let i = 0; i < 1000; i++) {
-      const sourceConc = Math.random() * 20 + 0.1 // 0.1-20 µg/L
+      const sourceConc = Math.random() * 20 + 0.1 // 0.1-20 ng/L
       const distance = Math.random() * 25 + 1 // 1-25 km
       const temperature = Math.random() * 20 + 10 // 10-30°C
       const pH = Math.random() * 2 + 6.5 // 6.5-8.5

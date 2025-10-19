@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin, Waves, AlertTriangle } from 'lucide-react'
+import { MapPin, Waves, AlertTriangle, CheckCircle } from 'lucide-react'
 import { Region } from '@/components/RegionSelector'
 
 interface HeatmapData {
@@ -51,7 +51,7 @@ function generateRegionalData(region: Region): HeatmapData[] {
   hotspots.forEach((hotspot, index) => {
     const lat = baseLat + hotspot.offset[0]
     const lng = baseLng + hotspot.offset[1]
-    const concentration = hotspot.intensity * 2.5 // Convert to µg/L
+    const concentration = hotspot.intensity * 2.5 // Convert to ng/L
     
     baseData.push({
       lat,
@@ -157,7 +157,7 @@ export function PollutionHeatmap({ data, selectedRegion, className }: PollutionH
             <div class="space-y-1">
               <div><strong>Localisation:</strong> ${point.location}</div>
               <div><strong>Région:</strong> ${point.region}</div>
-              <div><strong>Concentration:</strong> ${point.concentration.toFixed(3)} µg/L</div>
+              <div><strong>Concentration:</strong> ${point.concentration.toFixed(3)} ng/L</div>
               <div><strong>Niveau:</strong> <span style="color: ${color}">${intensity > 0.8 ? 'Critique' : intensity > 0.6 ? 'Élevé' : intensity > 0.4 ? 'Modéré' : 'Faible'}</span></div>
             </div>
           </div>
@@ -278,15 +278,15 @@ export function PollutionHeatmap({ data, selectedRegion, className }: PollutionH
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
             <div className="flex items-center space-x-2 p-2 rounded bg-green-500/20">
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span>Faible (&lt;0.6 µg/L)</span>
+              <span>Faible (&lt;0.6 ng/L)</span>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded bg-yellow-500/20">
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <span>Modéré (0.6-1.2 µg/L)</span>
+              <span>Modéré (0.6-1.2 ng/L)</span>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded bg-red-500/20">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <span>Élevé (&gt;1.2 µg/L)</span>
+              <span>Élevé (&gt;1.2 ng/L)</span>
             </div>
           </div>
         </div>
@@ -295,16 +295,18 @@ export function PollutionHeatmap({ data, selectedRegion, className }: PollutionH
         {selectedPoint && (
           <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
             <div className="flex items-start justify-between">
-              <div>
+              <div className="flex-1">
                 <h4 className="font-medium text-blue-400">{selectedPoint.molecule}</h4>
                 <p className="text-sm text-neutral/70 mt-1">{selectedPoint.location}, {selectedPoint.region}</p>
-                <p className="text-lg font-bold mt-2">{selectedPoint.concentration.toFixed(3)} µg/L</p>
+                <p className="text-lg font-bold mt-2">{selectedPoint.concentration.toFixed(3)} ng/L</p>
               </div>
               <div className="flex items-center space-x-1">
                 {selectedPoint.concentration > 1.2 ? (
-                  <AlertTriangle className="h-5 w-5 text-red-400" />
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                ) : selectedPoint.concentration > 0.6 ? (
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
                 ) : (
-                  <MapPin className="h-5 w-5 text-blue-400" />
+                  <CheckCircle className="h-5 w-5 text-green-500" />
                 )}
               </div>
             </div>

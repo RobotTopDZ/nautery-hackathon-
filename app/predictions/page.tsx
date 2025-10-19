@@ -121,7 +121,7 @@ export default function PredictionsPage() {
                   <div className="grid grid-cols-3 gap-4 text-xs">
                     <div>
                       <div className="text-neutral/70">Training RMSE:</div>
-                      <div className="font-medium">0.23 µg/L</div>
+                      <div className="font-medium">0.23 ng/L</div>
                     </div>
                     <div>
                       <div className="text-neutral/70">Validation R²:</div>

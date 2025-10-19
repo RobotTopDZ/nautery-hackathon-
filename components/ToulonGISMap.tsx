@@ -432,7 +432,7 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
         <div class="p-2 text-xs">
           <h4 class="font-bold text-blue-600">${station.stationName}</h4>
           <p><strong>Dispersion niveau ${index + 1}</strong></p>
-          <p>Concentration: ${finalConcentration.toFixed(2)} µg/L</p>
+          <p>Concentration: ${finalConcentration.toFixed(2)} ng/L</p>
           <p>Distance: ${layer.distance}m</p>
           <p>Vent: ${timeSlot.windDirection}° - ${timeSlot.windSpeed} km/h</p>
           <p>Capacité station: ${station.capacity?.toLocaleString()} m³/j</p>
@@ -606,7 +606,7 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
           <div class="p-3">
             <h4 class="font-bold" style="color: ${currentLevel.color}">${zone.name}</h4>
             <p><strong>Niveau:</strong> ${concentrationLevel.toUpperCase()}</p>
-            <p><strong>Concentration:</strong> ${concentration.toFixed(2)} µg/L</p>
+            <p><strong>Concentration:</strong> ${concentration.toFixed(2)} ng/L</p>
             <p><strong>Période:</strong> ${currentTimeSlot.label}</p>
             <p><strong>Vent:</strong> ${currentTimeSlot.windDirection}° - ${currentTimeSlot.windSpeed} km/h</p>
           </div>
@@ -732,7 +732,7 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
             <h4 class="font-bold" style="color: ${rejectionColor}">Point de Rejet</h4>
             <p><strong>Station:</strong> ${station.name}</p>
             <p><strong>Débit:</strong> ${station.capacity.toLocaleString()} m³/jour</p>
-            <p><strong>Concentration:</strong> ${dynamicConcentration.toFixed(2)} µg/L</p>
+            <p><strong>Concentration:</strong> ${dynamicConcentration.toFixed(2)} ng/L</p>
             <p><strong>Période:</strong> ${currentTimeSlot.label}</p>
             <p><strong>Facteur:</strong> ×${currentTimeSlot.multiplier}</p>
           </div>
@@ -1058,19 +1058,19 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
             <div className="space-y-1 text-xs">
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-red-600 rounded-full opacity-70"></div>
-                <span>Critique (&gt;4.0 µg/L)</span>
+                <span>Critique (&gt;4.0 ng/L)</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-orange-600 rounded-full opacity-60"></div>
-                <span>Élevé (3.0-4.0 µg/L)</span>
+                <span>Élevé (2.5-4.0 ng/L)</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-yellow-500 rounded-full opacity-50"></div>
-                <span>Modéré (2.0-3.0 µg/L)</span>
+                <span>Modéré (1.0-2.5 ng/L)</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 bg-green-500 rounded-full opacity-40"></div>
-                <span>Faible (1.0-2.0 µg/L)</span>
+                <span>Faible (&lt;1.0 ng/L)</span>
               </div>
             </div>
           </div>

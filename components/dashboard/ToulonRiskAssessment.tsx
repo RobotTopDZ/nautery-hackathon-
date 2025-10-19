@@ -933,8 +933,8 @@ Station GAPEAU
                     <div className="text-sm text-gray-300 mb-2">
                       <strong>{risk.pollutant}</strong>
                     </div>
-                    <div className="text-sm text-gray-400 break-words">
-                      Concentration: {risk.concentration} µg/L (Max: {risk.maxThreshold} µg/L)
+                    <div className="text-sm text-gray-400">
+                      Concentration: {risk.concentration} ng/L (Max: {risk.maxThreshold} ng/L)
                     </div>
                     <div className="text-xs text-gray-500 mt-1 break-words">
                       Région: {risk.region}

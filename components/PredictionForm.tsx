@@ -253,7 +253,7 @@ export default function PredictionForm() {
                   <div className="space-y-2">
                     <Label>Predicted Concentration</Label>
                     <div className="text-2xl font-bold text-primary">
-                      {prediction.concentration.toFixed(4)} µg/L
+                      {prediction.concentration.toFixed(4)} ng/L
                     </div>
                   </div>
                   <div className="space-y-2">

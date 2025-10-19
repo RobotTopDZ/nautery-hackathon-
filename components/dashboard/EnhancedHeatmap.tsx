@@ -55,7 +55,7 @@ function generateRegionalData(region: Region): HeatmapData[] {
   pollutionSources.forEach((source) => {
     const lat = baseLat + source.offset[0]
     const lng = baseLng + source.offset[1]
-    const concentration = source.intensity * 3.0 // Scale to realistic µg/L values
+    const concentration = source.intensity * 3.0 // Scale to realistic ng/L values
     
     baseData.push({
       lat,
@@ -175,7 +175,7 @@ export function EnhancedHeatmap({ data, selectedRegion, className }: EnhancedHea
             <div class="space-y-1 text-xs">
               <div><strong>Localisation:</strong> ${point.location}</div>
               <div><strong>Région:</strong> ${point.region}</div>
-              <div><strong>Concentration:</strong> ${point.concentration.toFixed(2)} µg/L</div>
+              <div><strong>Concentration:</strong> ${point.concentration.toFixed(2)} ng/L</div>
               <div><strong>Niveau:</strong> 
                 <span style="color: ${color}; font-weight: bold;">
                   ${intensity > 0.7 ? 'CRITIQUE' : intensity > 0.5 ? 'ÉLEVÉ' : intensity > 0.3 ? 'MODÉRÉ' : 'FAIBLE'}
@@ -249,19 +249,19 @@ export function EnhancedHeatmap({ data, selectedRegion, className }: EnhancedHea
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
             <div className="flex items-center space-x-2 p-2 rounded bg-green-500/20 border border-green-500/30">
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span>Faible (&lt;0.9 µg/L)</span>
+              <span>Faible (&lt;0.9 ng/L)</span>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded bg-yellow-500/20 border border-yellow-500/30">
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <span>Modéré (0.9-1.5 µg/L)</span>
+              <span>Modéré (0.9-1.5 ng/L)</span>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded bg-orange-500/20 border border-orange-500/30">
               <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-              <span>Élevé (1.5-2.1 µg/L)</span>
+              <span>Élevé (1.5-2.1 ng/L)</span>
             </div>
             <div className="flex items-center space-x-2 p-2 rounded bg-red-500/20 border border-red-500/30">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <span>Critique (&gt;2.1 µg/L)</span>
+              <span>Critique (&gt;2.1 ng/L)</span>
             </div>
           </div>
         </div>
@@ -277,7 +277,7 @@ export function EnhancedHeatmap({ data, selectedRegion, className }: EnhancedHea
                 <div className="mt-2 flex items-center space-x-4">
                   <div>
                     <span className="text-xs text-neutral/70">Concentration</span>
-                    <p className="text-lg font-bold text-primary">{selectedPoint.concentration.toFixed(2)} µg/L</p>
+                    <p className="text-lg font-bold text-primary">{selectedPoint.concentration.toFixed(2)} ng/L</p>
                   </div>
                   <div>
                     <span className="text-xs text-neutral/70">Niveau</span>

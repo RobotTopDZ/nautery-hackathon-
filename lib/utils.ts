@@ -10,9 +10,9 @@ export function formatNumber(value: number, decimals: number = 2): string {
 }
 
 export function formatConcentration(value: number): string {
-  if (value < 0.001) return '<0.001 µg/L'
-  if (value < 1) return `${value.toFixed(3)} µg/L`
-  if (value < 1000) return `${value.toFixed(2)} µg/L`
+  if (value < 0.001) return '<0.001 ng/L'
+  if (value < 1) return `${value.toFixed(3)} ng/L`
+  if (value < 1000) return `${value.toFixed(2)} ng/L`
   return `${(value / 1000).toFixed(2)} mg/L`
 }
 
