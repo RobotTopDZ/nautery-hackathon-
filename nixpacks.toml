@@ -2,7 +2,10 @@
 nixPkgs = ['nodejs-18_x', 'npm-9_x']
 
 [phases.install]
-cmds = ['npm ci']
+cmds = [
+  'rm -f package-lock.json',
+  'npm install --no-package-lock --production=false'
+]
 
 [phases.build]
 cmds = ['npm run build']

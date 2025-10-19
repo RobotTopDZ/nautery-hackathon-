@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "railway-build": "bash railway-build.sh"
   },
   "engines": {
     "node": ">=18.0.0",
