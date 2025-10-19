@@ -15,17 +15,34 @@ import {
   Zap,
   Info
 } from 'lucide-react'
-import { 
-  toulonStations, 
-  toulonPollutionZones, 
-  toulonEnvironmentalSites,
-  WastewaterStation,
-  PollutionZone,
-  EnvironmentalSite
-} from '@/data/toulonStations'
 
-interface ToulonInteractiveMapProps {
-  className?: string
+// Mock data interfaces
+interface WastewaterStation {
+  id: string
+  name: string
+  coords: [number, number]
+  capacity: number
+  efficiency: number
+  rejectionPoint: [number, number]
+  pollutants: string[]
+  level: string
+  baseConcentration: number
+}
+
+interface PollutionZone {
+  id: string
+  name: string
+  coordinates: [number, number][]
+  level: 'low' | 'medium' | 'high'
+  pollutants: string[]
+}
+
+interface EnvironmentalSite {
+  id: string
+  name: string
+  coordinates: [number, number]
+  type: string
+  status: string
 }
 
 interface SelectedFeature {

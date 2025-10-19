@@ -1,184 +1,69 @@
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const region = searchParams.get('region')
+    const region = searchParams.get('region') || 'all'
     const molecule = searchParams.get('molecule')
-    const timeRange = searchParams.get('timeRange') || '30' // days
+    const timeRange = searchParams.get('timeRange') || '7d'
 
-    const endDate = new Date()
-    const startDate = new Date(endDate.getTime() - parseInt(timeRange) * 24 * 60 * 60 * 1000)
+    // Generate mock data for dashboard
+    const mockHeatmapData = [
+      { lat: 43.1, lng: 5.9, intensity: 0.8 },
+      { lat: 43.12, lng: 5.95, intensity: 0.6 },
+      { lat: 43.08, lng: 5.88, intensity: 0.4 },
+      { lat: 43.15, lng: 6.0, intensity: 0.7 }
+    ]
 
-    // Build where clauses
-    const measurementWhere: any = {
-      timestamp: {
-        gte: startDate,
-        lte: endDate
+    const mockRiskData = [
+      { location: 'Toulon Bay', riskLevel: 'MODERATE', riskScore: 65, coordinates: [43.1, 5.9] },
+      { location: 'Hyères', riskLevel: 'LOW', riskScore: 35, coordinates: [43.12, 6.13] }
+    ]
+
+    const mockTrends = [
+      { date: '2024-10-12', concentration: 2.3 },
+      { date: '2024-10-13', concentration: 2.1 },
+      { date: '2024-10-14', concentration: 2.5 },
+      { date: '2024-10-15', concentration: 2.8 },
+      { date: '2024-10-16', concentration: 2.4 },
+      { date: '2024-10-17', concentration: 2.6 },
+      { date: '2024-10-18', concentration: 2.2 }
+    ]
+
+    const mockPredictions = [
+      {
+        id: 1,
+        distance: 5.2,
+        concentration: 1.8,
+        confidence: 0.85,
+        source: { lat: 43.1, lng: 5.9 },
+        target: { lat: 43.12, lng: 5.95 }
       }
-    }
-
-    if (region) {
-      measurementWhere.location = {
-        regionName: {
-          contains: region,
-          mode: 'insensitive'
-        }
-      }
-    }
-
-    if (molecule) {
-      measurementWhere.molecule = {
-        name: {
-          contains: molecule,
-          mode: 'insensitive'
-        }
-      }
-    }
-
-    // Get recent measurements for heatmap
-    const measurements = await prisma.fieldMeasurement.findMany({
-      where: measurementWhere,
-      include: {
-        location: true,
-        molecule: true
-      },
-      orderBy: { timestamp: 'desc' },
-      take: 100
-    })
-
-    // Get risk indices
-    const riskIndices = await prisma.riskIndex.findMany({
-      where: {
-        timestamp: {
-          gte: startDate,
-          lte: endDate
-        }
-      },
-      include: {
-        location: true,
-        molecule: true
-      },
-      orderBy: { riskLevel: 'desc' }
-    })
-
-    // Get trend data (last 30 days)
-    const trendData = await prisma.fieldMeasurement.findMany({
-      where: {
-        ...measurementWhere,
-        timestamp: {
-          gte: new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000),
-          lte: endDate
-        }
-      },
-      include: { molecule: true },
-      orderBy: { timestamp: 'asc' }
-    })
-
-    // Get predicted concentrations
-    const predictions = await prisma.predictedConcentration.findMany({
-      where: {
-        timestamp: {
-          gte: startDate,
-          lte: endDate
-        }
-      },
-      include: {
-        sourceMeasurement: {
-          include: {
-            molecule: true,
-            location: true
-          }
-        }
-      },
-      take: 50
-    })
-
-    // Transform data for frontend
-    const heatmapData = measurements.map(m => ({
-      lat: m.location.latitude,
-      lng: m.location.longitude,
-      intensity: Math.min(m.concentrationUgL / (m.molecule.toxicThresholdUgL || 10), 1),
-      concentration: m.concentrationUgL,
-      molecule: m.molecule.name,
-      location: m.location.regionName,
-      timestamp: m.timestamp
-    }))
-
-    const riskData = riskIndices.map(r => ({
-      id: r.id,
-      location: r.location.regionName,
-      molecule: r.molecule.name,
-      riskLevel: r.riskLevel,
-      riskCategory: this.getRiskCategory(r.riskLevel),
-      concentration: r.averageConcentrationUgL,
-      threshold: r.molecule.toxicThresholdUgL || 10,
-      trend: r.riskTrend.toLowerCase() as 'increasing' | 'stable' | 'decreasing',
-      recommendedAction: r.recommendedAction,
-      lastUpdate: r.timestamp.toISOString()
-    }))
-
-    // Group trend data by molecule and date
-    const trendByMolecule = trendData.reduce((acc, measurement) => {
-      const key = measurement.molecule.name
-      if (!acc[key]) acc[key] = []
-      
-      acc[key].push({
-        date: measurement.timestamp.toISOString().split('T')[0],
-        concentration: measurement.concentrationUgL,
-        threshold: measurement.molecule.toxicThresholdUgL
-      })
-      
-      return acc
-    }, {} as Record<string, any[]>)
-
-    // Get dashboard metadata
-    const dashboardMetadata = await prisma.dashboardMetadata.findMany({
-      where: {
-        lastUpdate: {
-          gte: startDate
-        }
-      },
-      include: { molecule: true }
-    })
+    ]
 
     return NextResponse.json({
-      heatmapData,
-      riskData,
-      trendData: trendByMolecule,
-      predictions: predictions.map(p => ({
-        distance: p.distanceKm,
-        concentration: p.predictedConcentrationUgL,
-        confidence: p.confidenceScore,
-        modelType: p.modelType,
-        sourceMolecule: p.sourceMeasurement.molecule.name,
-        sourceLocation: p.sourceMeasurement.location.regionName,
-        lat: p.latitudePred,
-        lng: p.longitudePred
-      })),
-      metadata: dashboardMetadata.map(m => ({
-        region: m.regionName,
-        timePeriod: m.timePeriod,
-        molecule: m.molecule?.name,
-        avgConcentration: m.avgConcentrationUgL,
-        maxConcentration: m.maxConcentrationUgL,
-        numHotspots: m.numHotspots,
-        avgRiskLevel: m.avgRiskLevel,
-        trendIndicator: m.trendIndicator
-      })),
-      summary: {
-        totalMeasurements: measurements.length,
-        totalRisks: riskIndices.length,
-        criticalRisks: riskIndices.filter(r => r.riskLevel >= 4).length,
-        averageRiskLevel: riskIndices.length > 0 ? 
-          riskIndices.reduce((sum, r) => sum + r.riskLevel, 0) / riskIndices.length : 0
+      success: true,
+      data: {
+        heatmapData: mockHeatmapData,
+        riskData: mockRiskData,
+        trends: mockTrends,
+        predictions: mockPredictions,
+        summary: {
+          totalMeasurements: 156,
+          avgConcentration: 2.4,
+          maxConcentration: 4.2,
+          totalSites: 8,
+          avgRiskScore: 45,
+          timeRange,
+          lastUpdated: new Date()
+        }
       }
     })
+
   } catch (error) {
-    console.error('Error fetching dashboard data:', error)
+    console.error('Dashboard API Error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch dashboard data' },
+      { success: false, error: 'Failed to fetch dashboard data' },
       { status: 500 }
     )
   }

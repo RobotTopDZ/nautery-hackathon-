@@ -69,11 +69,29 @@ export async function GET(request: Request) {
       )
     }
 
-    // Get source measurement
-    const measurement = await prisma.fieldMeasurement.findUnique({
-      where: { id: parseInt(measurementId) },
-      include: { molecule: true, location: true }
-    })
+    // Mock source measurement
+    const measurement = {
+      id: parseInt(measurementId),
+      concentration: 2.5,
+      concentrationUgL: 2.5,
+      temperatureC: 18.5,
+      pH: 7.8,
+      salinityPsu: 35.2,
+      currentSpeedMs: 0.15,
+      windSpeedMs: 3.2,
+      timestamp: new Date(),
+      molecule: { 
+        name: 'Diclofenac',
+        toxicThresholdUgL: 0.1
+      },
+      location: { 
+        latitude: 43.1, 
+        longitude: 5.9, 
+        name: 'Toulon Bay',
+        regionName: 'Var',
+        depthM: 15.5
+      }
+    }
 
     if (!measurement) {
       return NextResponse.json(

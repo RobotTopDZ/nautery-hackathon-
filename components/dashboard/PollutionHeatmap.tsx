@@ -171,17 +171,17 @@ export function PollutionHeatmap({ data, selectedRegion, className }: PollutionH
         })
 
         // Add hover effects
-        marker.on('mouseover', function() {
+        marker.on('mouseover', function(this: any) {
           this.setStyle({
             weight: 4,
             opacity: 1
           })
         })
 
-        marker.on('mouseout', function() {
+        marker.on('mouseout', function(this: any) {
           this.setStyle({
-            weight: isPulse ? 3 : 2,
-            opacity: 0.9
+            weight: 2,
+            opacity: 0.7
           })
         })
 
@@ -189,7 +189,7 @@ export function PollutionHeatmap({ data, selectedRegion, className }: PollutionH
       })
 
       // Add custom zoom controls
-      const zoomControl = L.control({ position: isMobile ? 'bottomright' : 'topright' })
+      const zoomControl = new L.Control({ position: isMobile ? 'bottomright' : 'topright' })
       zoomControl.onAdd = function() {
         const div = L.DomUtil.create('div', 'custom-zoom-control')
         div.innerHTML = `

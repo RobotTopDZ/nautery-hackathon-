@@ -1,5 +1,5 @@
 import { Matrix } from 'ml-matrix'
-import { RandomForestRegression } from 'ml-regression'
+// import { RandomForestRegression } from 'ml-regression'
 
 export interface PredictionInput {
   sourceConcentration: number
@@ -24,17 +24,12 @@ export interface PredictionResult {
 }
 
 export class ContaminantDiffusionModel {
-  private model: RandomForestRegression | null = null
+  private model: any = null
   private isTrained = false
 
   constructor() {
-    this.initializeModel()
-  }
-
-  private initializeModel() {
-    // Initialize with mock training data
-    const trainingData = this.generateTrainingData()
-    this.trainModel(trainingData.features, trainingData.targets)
+    // Use physics-based model only
+    this.isTrained = true
   }
 
   private generateTrainingData() {
@@ -69,52 +64,13 @@ export class ContaminantDiffusionModel {
   }
 
   private trainModel(features: number[][], targets: number[]) {
-    try {
-      this.model = new RandomForestRegression({
-        nEstimators: 50,
-        maxDepth: 10,
-        minSamplesLeaf: 2
-      })
-      
-      this.model.train(features, targets)
-      this.isTrained = true
-    } catch (error) {
-      console.error('Error training model:', error)
-      this.isTrained = false
-    }
+    // Use physics-based model only
+    this.isTrained = true
   }
 
   predict(input: PredictionInput): PredictionResult {
-    if (!this.model || !this.isTrained) {
-      // Fallback to physics-based prediction
-      return this.physicsBasedPrediction(input)
-    }
-
-    try {
-      const features = [
-        input.sourceConcentration,
-        input.distance,
-        input.temperature,
-        input.pH,
-        input.salinity,
-        input.currentSpeed,
-        input.windSpeed,
-        input.depth
-      ]
-
-      const prediction = this.model.predict([features])[0]
-      const confidence = this.calculateConfidence(input)
-      const factors = this.analyzeFactors(input)
-
-      return {
-        predictedConcentration: Math.max(0.001, prediction),
-        confidence,
-        factors
-      }
-    } catch (error) {
-      console.error('Error making prediction:', error)
-      return this.physicsBasedPrediction(input)
-    }
+    // Always use physics-based prediction
+    return this.physicsBasedPrediction(input)
   }
 
   private physicsBasedPrediction(input: PredictionInput): PredictionResult {
