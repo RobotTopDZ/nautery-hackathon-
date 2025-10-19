@@ -967,14 +967,15 @@ Station GAPEAU
           </div>
 
           {/* Boutons d'action */}
-          <div className="flex space-x-4 mt-6">
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mt-6">
             <Button 
               onClick={handleEmergencyResponse}
               className="bg-red-600 hover:bg-red-700 flex-1"
               disabled={criticalCount === 0}
             >
               <Shield className="h-4 w-4 mr-2" />
-              Réponse d'Urgence
+              <span className="hidden sm:inline">Réponse d'Urgence</span>
+              <span className="sm:hidden">Urgence</span>
             </Button>
             <Button 
               onClick={generatePDFReport}
@@ -982,7 +983,12 @@ Station GAPEAU
               disabled={isGeneratingReport}
             >
               <FileText className="h-4 w-4 mr-2" />
-              {isGeneratingReport ? 'Génération PDF...' : 'Générer Rapport PDF'}
+              <span className="hidden sm:inline">
+                {isGeneratingReport ? 'Génération PDF...' : 'Générer Rapport PDF'}
+              </span>
+              <span className="sm:hidden">
+                {isGeneratingReport ? 'PDF...' : 'PDF'}
+              </span>
             </Button>
           </div>
         </CardContent>

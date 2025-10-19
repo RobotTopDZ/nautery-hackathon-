@@ -13,19 +13,19 @@ import {
 
 const mobileNavigation = [
   {
-    name: 'Accueil',
+    name: 'Dashboard',
     href: '/',
     icon: Home,
     color: 'text-blue-400'
   },
   {
-    name: 'Prédire',
-    href: '/predict',
+    name: 'Prédictions',
+    href: '/predictions',
     icon: Brain,
     color: 'text-purple-400'
   },
   {
-    name: 'Toulon',
+    name: 'Géographique',
     href: '/toulon',
     icon: Map,
     color: 'text-green-400'

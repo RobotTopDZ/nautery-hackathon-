@@ -57,7 +57,7 @@ Thumbs.db
 *.db
 *.csv
 *.txt
-*.png
+# *.png (allow logo)
 *.jpg
 *.joblib
 *.pyc

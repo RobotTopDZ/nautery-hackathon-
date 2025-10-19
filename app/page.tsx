@@ -6,6 +6,7 @@ import { EnhancedHeatmap } from '@/components/dashboard/EnhancedHeatmap'
 import { ToulonRiskAssessment } from '@/components/dashboard/ToulonRiskAssessment'
 import { RegionSelector, Region, regions } from '@/components/RegionSelector'
 import { MobileNavigation } from '@/components/MobileNavigation'
+import { Navigation } from '@/components/Navigation'
 import { generateRegionalKPIs, getRegionDisplayInfo } from '@/utils/regionKPIs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -108,16 +109,25 @@ export default function Dashboard() {
     : []
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-background flex">
+      {/* Navigation */}
+      <Navigation />
+      
+      <div className="flex-1 lg:ml-0">
+        {/* Header */}
+        <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-40 lg:pl-4">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-primary">🌊 Surveillance Pollution Marine</h1>
-              <p className="text-xs md:text-sm text-neutral/70">
-                Données environnementales en temps réel et analyses prédictives
-              </p>
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">NM</span>
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold text-primary">Nautery Monitor</h1>
+                <p className="text-xs md:text-sm text-neutral/70">
+                  Ocean Pollution Analytics Platform
+                </p>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="hidden md:block text-xs text-neutral/50">
@@ -320,10 +330,11 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+        </div>
+        
+        {/* Mobile Navigation */}
+        <MobileNavigation />
       </div>
-      
-      {/* Mobile Navigation */}
-      <MobileNavigation />
     </div>
   )
 }
