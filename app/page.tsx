@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { KPICard } from '@/components/dashboard/KPICard'
-import { EnhancedHeatmap } from '@/components/dashboard/EnhancedHeatmap'
 import { ToulonRiskAssessment } from '@/components/dashboard/ToulonRiskAssessment'
 import { RegionSelector, Region, regions } from '@/components/RegionSelector'
 import { MobileNavigation } from '@/components/MobileNavigation'
@@ -268,19 +267,9 @@ export default function Dashboard() {
         </section>
 
         {/* Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Enhanced Heatmap with Region Support - Takes up 2 columns */}
-          <div className="lg:col-span-2">
-            <EnhancedHeatmap 
-              data={dashboardData.heatmapData} 
-              selectedRegion={selectedRegion}
-            />
-          </div>
-
+        <div className="grid grid-cols-1 gap-6">
           {/* Toulon Risk Assessment */}
-          <div className="lg:col-span-1">
-            <ToulonRiskAssessment />
-          </div>
+          <ToulonRiskAssessment />
         </div>
 
 
