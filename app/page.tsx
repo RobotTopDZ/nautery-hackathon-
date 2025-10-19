@@ -128,7 +128,7 @@ export default function Dashboard() {
           lastUpdate={lastUpdate}
         />
 
-        <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
+        <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 mobile-content-padding space-y-4 md:space-y-6">
         {/* Interactive Region Selector */}
         <section className="mb-6">
           <div className="flex items-center justify-between mb-4">

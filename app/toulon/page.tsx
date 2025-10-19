@@ -16,7 +16,7 @@ export default function ToulonPage() {
           subtitle="Pollution Marine & Stations d'Épuration"
         />
 
-        <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 pb-20 md:pb-6">
+        <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 mobile-content-padding">
 
         {/* Interactive Map */}
         <ToulonGISMap />

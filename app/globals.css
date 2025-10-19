@@ -5,6 +5,49 @@
 /* Leaflet CSS */
 @import 'leaflet/dist/leaflet.css';
 
+/* Mobile Navigation Fix */
+@supports (padding: max(0px)) {
+  .safe-area-inset-bottom {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  .pb-safe {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* Ensure mobile navigation stays fixed */
+@media (max-width: 768px) {
+  .mobile-nav-fixed {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+    will-change: transform !important;
+  }
+  
+  /* Prevent body scroll affecting navigation */
+  body {
+    padding-bottom: max(4rem, env(safe-area-inset-bottom, 0px));
+  }
+  
+  /* Add padding to main content on mobile */
+  .mobile-content-padding {
+    padding-bottom: max(5rem, calc(4rem + env(safe-area-inset-bottom, 0px)));
+  }
+  
+  /* iOS Safari specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    .mobile-nav-fixed {
+      position: -webkit-sticky !important;
+      position: sticky !important;
+      bottom: 0 !important;
+    }
+  }
+}
+
 @layer base {
   :root {
     --background: #0A2342;

@@ -73,7 +73,7 @@ export default function PredictionsPage() {
           subtitle="Modélisation avancée de diffusion des contaminants"
         />
 
-        <div className="pt-20 container mx-auto px-6 py-6">
+        <div className="pt-20 container mx-auto px-6 py-6 mobile-content-padding">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Prediction Tool */}
           <div className="lg:col-span-1">
