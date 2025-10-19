@@ -89,7 +89,7 @@ export function PredictionPanel() {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Target className="h-5 w-5" />
-          <span>🔮 ML Prediction Tool</span>
+          <span>ML Prediction Tool</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">

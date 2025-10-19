@@ -36,7 +36,7 @@ export function MobileNavigation() {
   const pathname = usePathname()
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm border-t border-gray-700/50">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200/50 shadow-lg">
       <div className="grid grid-cols-3 h-16">
         {mobileNavigation.map((item) => {
           const isActive = pathname === item.href
@@ -47,22 +47,32 @@ export function MobileNavigation() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center space-y-1 transition-all duration-200",
-                isActive 
-                  ? "bg-primary/10 text-primary" 
-                  : "text-neutral/70 hover:text-neutral active:scale-95"
+                "flex flex-col items-center justify-center space-y-1 transition-all duration-300 relative group",
+                "hover:bg-gray-50 active:scale-95 active:bg-gray-100",
+                isActive && "text-blue-600"
               )}
             >
+              {/* Active indicator */}
+              {isActive && (
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-blue-600 rounded-full" />
+              )}
+              
+              {/* Icon with bounce animation */}
               <Icon className={cn(
-                "h-5 w-5 transition-colors",
-                isActive ? "text-primary" : item.color
+                "h-5 w-5 transition-all duration-300 group-hover:scale-110",
+                isActive ? "text-blue-600" : "text-gray-600"
               )} />
+              
+              {/* Label */}
               <span className={cn(
-                "text-xs font-medium transition-colors",
-                isActive ? "text-primary" : "text-neutral/70"
+                "text-xs font-medium transition-all duration-300",
+                isActive ? "text-blue-600 font-semibold" : "text-gray-600"
               )}>
                 {item.name}
               </span>
+              
+              {/* Ripple effect */}
+              <div className="absolute inset-0 rounded-lg bg-blue-600/10 scale-0 group-active:scale-100 transition-transform duration-150" />
             </Link>
           )
         })}

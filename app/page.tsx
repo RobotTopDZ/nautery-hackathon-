@@ -11,7 +11,10 @@ import { Logo } from '@/components/Logo'
 import { Header } from '@/components/Header'
 import { generateRegionalKPIs, getRegionDisplayInfo } from '@/utils/regionKPIs'
 import { Button } from '@/components/ui/button'
+import { EnhancedButton } from '@/components/ui/enhanced-button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { EnhancedCard, EnhancedCardContent, EnhancedCardHeader, EnhancedCardTitle } from '@/components/ui/enhanced-card'
+import { EnhancedKPICard } from '@/components/dashboard/EnhancedKPICard'
 import { 
   Droplets, 
   Thermometer, 
@@ -134,14 +137,15 @@ export default function Dashboard() {
               <h2 className="text-lg md:text-xl font-semibold text-neutral">Sélection Interactive de Région</h2>
             </div>
             {selectedRegion?.id === 'toulon' && (
-              <Button 
+              <EnhancedButton 
                 onClick={() => window.open('/toulon', '_blank')}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700"
+                variant="gradient"
+                ripple={true}
               >
                 <MapPin className="h-4 w-4 mr-2" />
                 Carte Détaillée Toulon
-              </Button>
+              </EnhancedButton>
             )}
           </div>
           <RegionSelector 
@@ -154,37 +158,40 @@ export default function Dashboard() {
         <section>
           <h2 className="text-lg md:text-xl font-semibold text-neutral mb-4">Concentrations et Analyses Détaillées</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <KPICard
+            <EnhancedKPICard
               title="Concentration Moyenne"
               value={regionalKPIs.pollution.averageConcentration}
               unit="ng/L"
-              icon={<Droplets className="h-4 w-4" />}
+              icon={Droplets}
+              color="blue"
+              trend={{ value: 2.3, isPositive: false }}
+              description="Niveau stable dans la normale"
             />
-            
-            <KPICard
-              title="Concentration Maximale"
+            <EnhancedKPICard
+              title="Pic de Pollution"
               value={regionalKPIs.pollution.peakConcentration}
               unit="ng/L"
-              alert={regionalKPIs.pollution.peakConcentration > 40}
-              icon={<TrendingUp className="h-4 w-4" />}
+              icon={TrendingUp}
+              color="red"
+              trend={{ value: 5.1, isPositive: true }}
+              description="Augmentation détectée"
             />
-
-            <KPICard
-              title="Fréquence de Contamination"
-              value={regionalKPIs.pollution.contaminationFrequency}
-              unit="%"
-              alert={regionalKPIs.pollution.contaminationFrequency > 20}
-              description="% dépassant les limites sûres"
-              icon={<AlertTriangle className="h-4 w-4" />}
+            <EnhancedKPICard
+              title="Température Eau"
+              value={regionalKPIs.waterQuality.temperatureVariation}
+              unit="°C"
+              icon={Thermometer}
+              color="green"
+              trend={{ value: 1.2, isPositive: false }}
+              description="Conditions optimales"
             />
-
-            <KPICard
-              title="Oxygène Dissous"
-              value={regionalKPIs.waterQuality.dissolvedOxygenLevel}
-              unit="mg/L"
-              alert={regionalKPIs.waterQuality.dissolvedOxygenLevel < 5}
-              description="Santé aquatique"
-              icon={<Activity className="h-4 w-4" />}
+            <EnhancedKPICard
+              title="Niveau d'Alerte"
+              value={regionalKPIs.governance.alertLevelCount}
+              unit="alertes"
+              icon={AlertTriangle}
+              color="yellow"
+              description="Surveillance active"
             />
           </div>
         </section>

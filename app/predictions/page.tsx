@@ -82,13 +82,6 @@ export default function PredictionsPage() {
 
           {/* Results and Analysis */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Model Performance */}
-            <TrendChart
-              data={sampleTrendData}
-              title="Model Performance: Predicted vs Observed"
-              molecule="Sample Contaminant"
-              type="line"
-            />
 
 
             {/* Model Information */}
