@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { 
-  MapPin, Waves, Factory, Droplets, Navigation, Target, Layers, Satellite
+  MapPin, Waves, Factory, Droplets, Navigation, Target, Layers, Satellite, Map as MapIcon
 } from 'lucide-react'
 
 // Données géographiques avec coordonnées réelles des points de rejet
@@ -114,6 +114,7 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
   const [currentTimeSlot, setCurrentTimeSlot] = useState(timeSlots[4]) // Décembre 2024 par défaut
   const [concentrationLevel, setConcentrationLevel] = useState<'low' | 'medium' | 'high'>('medium')
   const [showWindEffect, setShowWindEffect] = useState(true)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
     if (!mapRef.current) return
@@ -580,12 +581,12 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
     return smoothedPoints
   }
 
-  // Fonction pour prédire la concentration en un point
+  // Fonction pour prédire la concentration en un point avec dégradé continu
   const predictConcentration = (lat: number, lon: number) => {
     let totalConcentration = 0
-    let influences: Array<{source: string, distance: number, influence: string, level: string}> = []
+    let influences: Array<{source: string, distance: number, influence: string, level: string, contribution: number}> = []
 
-    // Influence des points de rejet
+    // Influence des points de rejet avec dégradé continu
     toulonStations.forEach(station => {
       let rejectionPoint = station.rejectionPoint
       
@@ -594,38 +595,65 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
       }
       
       const distance = calculateDistance(lat, lon, rejectionPoint[0], rejectionPoint[1])
-      if (distance < 5000) {
-        const attenuation = Math.exp(-distance / 1500)
-        const influence = station.baseConcentration * attenuation * currentTimeSlot.multiplier
-        totalConcentration += influence
-        influences.push({
-          source: station.name,
-          distance: Math.round(distance),
-          influence: influence.toFixed(3),
-          level: station.level
-        })
+      
+      // Dégradé continu avec plusieurs facteurs d'atténuation
+      if (distance < 8000) { // Augmenté la portée
+        // Atténuation exponentielle avec facteur de distance variable
+        const baseAttenuation = Math.exp(-distance / 2000) // Facteur principal
+        const windEffect = 1 + (currentTimeSlot.windSpeed / 100) // Effet du vent
+        const depthFactor = Math.max(0.3, 1 - (distance / 10000)) // Facteur de profondeur
+        
+        // Concentration avec dégradé naturel
+        const baseInfluence = station.baseConcentration * currentTimeSlot.multiplier
+        const distanceInfluence = baseInfluence * baseAttenuation * windEffect * depthFactor
+        
+        // Ajout de variabilité naturelle
+        const naturalVariation = 0.8 + (Math.random() * 0.4) // ±20% de variation
+        const finalInfluence = distanceInfluence * naturalVariation
+        
+        if (finalInfluence > 0.001) { // Seuil minimal
+          totalConcentration += finalInfluence
+          influences.push({
+            source: station.name,
+            distance: Math.round(distance),
+            influence: finalInfluence.toFixed(4),
+            level: station.level,
+            contribution: (finalInfluence / baseInfluence) * 100
+          })
+        }
       }
     })
 
-    // Influence des zones de pollution avec niveau variable
+    // Influence des zones de pollution avec dégradé continu
     pollutionZones.forEach(zone => {
       const distance = calculateDistance(lat, lon, zone.center[0], zone.center[1])
-      if (distance < zone.radius) {
-        const attenuation = Math.exp(-distance / (zone.radius * 0.3))
+      const effectiveRadius = zone.radius * 1.5 // Étendre l'influence
+      
+      if (distance < effectiveRadius) {
+        // Dégradé continu pour les zones
+        const proximityFactor = Math.max(0, 1 - (distance / effectiveRadius))
         const currentLevel = zone.levels[concentrationLevel]
-        const influence = currentLevel.concentration * attenuation * currentTimeSlot.multiplier
-        totalConcentration += influence
-        influences.push({
-          source: zone.name,
-          distance: Math.round(distance),
-          influence: influence.toFixed(3),
-          level: concentrationLevel
-        })
+        const baseInfluence = currentLevel.concentration * currentTimeSlot.multiplier
+        
+        // Atténuation progressive avec courbe naturelle
+        const attenuationCurve = Math.pow(proximityFactor, 1.5) // Courbe plus naturelle
+        const finalInfluence = baseInfluence * attenuationCurve
+        
+        if (finalInfluence > 0.001) {
+          totalConcentration += finalInfluence
+          influences.push({
+            source: zone.name,
+            distance: Math.round(distance),
+            influence: finalInfluence.toFixed(4),
+            level: concentrationLevel,
+            contribution: proximityFactor * 100
+          })
+        }
       }
     })
 
     return {
-      totalConcentration: totalConcentration.toFixed(3),
+      totalConcentration: totalConcentration.toFixed(4),
       influences: influences.sort((a, b) => parseFloat(b.influence) - parseFloat(a.influence))
     }
   }
@@ -992,13 +1020,38 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
   }
 
   return (
-    <Card className={className}>
-      <CardHeader>
+    <Card className={`${className} ${isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'bg-card/50 border-gray-700/50'}`}>
+      <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Waves className="h-5 w-5 text-blue-400" />
-            <span>Carte GIS - Système d'Épuration Toulon</span>
+            <MapIcon className="h-5 w-5 text-blue-400" />
+            <span>Carte Interactive Toulon</span>
+            {isFullscreen && (
+              <span className="text-sm text-gray-500 ml-2">- Mode Plein Écran</span>
+            )}
           </div>
+          
+          {/* Bouton plein écran pour mobile */}
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="md:hidden p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors flex items-center space-x-1"
+          >
+            {isFullscreen ? (
+              <>
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span className="text-xs">Fermer</span>
+              </>
+            ) : (
+              <>
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                </svg>
+                <span className="text-xs">Plein Écran</span>
+              </>
+            )}
+          </button>
           <Badge className="bg-green-600">Données Géolocalisées</Badge>
         </CardTitle>
       </CardHeader>
@@ -1142,10 +1195,14 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
           </div>
         </div>
 
-        {/* Carte Leaflet */}
+        {/* Carte */}
         <div 
           ref={mapRef} 
-          className="w-full h-[600px] rounded-lg border-2 border-gray-300 shadow-lg"
+          className={`w-full rounded-lg border border-gray-700/50 relative overflow-hidden ${
+            isFullscreen 
+              ? 'h-[calc(100vh-200px)]' 
+              : 'h-[400px] md:h-[500px]'
+          }`}
           style={{ zIndex: 1 }}
         />
 
@@ -1280,64 +1337,90 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
           </div>
         )}
 
-        {/* Prédiction de concentration au point cliqué */}
+        {/* Prédiction de concentration au point cliqué - Version moderne */}
         {clickedPoint && (
-          <div className="p-4 bg-gray-900 text-white border border-green-500 rounded-lg shadow-lg">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center space-x-2">
-                <MapPin className="h-5 w-5 text-green-600" />
-                <h4 className="font-medium text-green-600">Prédiction de Concentration</h4>
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => setClickedPoint(null)}>×</Button>
+          <div className="modern-popup bg-white rounded-xl shadow-2xl border-0 p-5 min-w-[350px] max-w-[400px]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-800 flex items-center">
+                <MapPin className="h-5 w-5 text-blue-600 mr-2" />
+                Prédiction IA
+              </h3>
+              <button 
+                onClick={() => setClickedPoint(null)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
+              >
+                ×
+              </button>
             </div>
             
-            <div className="space-y-3 text-sm">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div><strong>Coordonnées:</strong></div>
-                  <div className="text-xs bg-gray-800 text-gray-200 p-2 rounded">
-                    {clickedPoint.coords[0].toFixed(6)}°N<br/>
-                    {clickedPoint.coords[1].toFixed(6)}°E
-                  </div>
-                </div>
-                <div>
-                  <div><strong>Concentration totale:</strong></div>
-                  <div className="text-lg font-bold text-green-600">
-                    {clickedPoint.prediction.totalConcentration} µg/L
-                  </div>
+            <div className="space-y-4">
+              {/* Coordonnées */}
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-xs text-gray-500 mb-1">Position GPS</div>
+                <div className="font-mono text-sm text-gray-800">
+                  {clickedPoint.coords[0].toFixed(6)}°N<br/>
+                  {clickedPoint.coords[1].toFixed(6)}°E
                 </div>
               </div>
               
+              {/* Concentration totale */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                <div className="text-sm text-gray-600 mb-1">Concentration Prédite</div>
+                <div className="text-3xl font-bold text-blue-600">
+                  {clickedPoint.prediction.totalConcentration} ng/L
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Basé sur {clickedPoint.prediction.influences?.length || 0} source(s)
+                </div>
+              </div>
+              
+              {/* Sources d'influence */}
               {clickedPoint.prediction.influences?.length > 0 && (
                 <div>
-                  <div><strong>Sources d'influence:</strong></div>
-                  <div className="space-y-2 mt-2">
+                  <div className="text-sm font-semibold text-gray-700 mb-3">Sources d'Influence</div>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
                     {clickedPoint.prediction.influences?.map((influence: any, index: number) => (
-                      <div key={index} className="bg-gray-800 text-gray-200 p-2 rounded text-xs">
-                        <div className="flex justify-between items-center">
-                          <span className="font-medium">{influence.source}</span>
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            influence.level === 'high' ? 'bg-red-500 text-white' :
-                            influence.level === 'medium' ? 'bg-orange-500 text-white' :
-                            influence.level === 'low' ? 'bg-green-500 text-white' :
-                            'bg-gray-500 text-white'
+                      <div key={index} className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="font-medium text-gray-800 text-sm">{influence.source}</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            influence.level === 'high' ? 'bg-red-100 text-red-800' :
+                            influence.level === 'medium' ? 'bg-orange-100 text-orange-800' :
+                            influence.level === 'low' ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
                           }`}>
                             {influence.level}
                           </span>
                         </div>
-                        <div className="mt-1">
-                          Distance: {influence.distance}m | Contribution: {influence.influence} µg/L
+                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                          <div>
+                            <span className="text-gray-500">Distance:</span> {influence.distance}m
+                          </div>
+                          <div>
+                            <span className="text-gray-500">Impact:</span> {influence.influence} ng/L
+                          </div>
+                        </div>
+                        <div className="mt-2">
+                          <div className="bg-gray-100 rounded-full h-2">
+                            <div 
+                              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${Math.min(100, influence.contribution || 0)}%` }}
+                            ></div>
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">
+                            Contribution: {(influence.contribution || 0).toFixed(1)}%
+                          </div>
                         </div>
                       </div>
-                    )) || []}
+                    ))}
                   </div>
                 </div>
               )}
               
-              {(!clickedPoint.prediction.influences || clickedPoint.prediction.influences.length === 0) && (
-                <div className="text-center text-gray-500 py-4">
-                  <div>Zone non polluée</div>
-                  <div className="text-xs">Aucune source de pollution détectée dans un rayon de 5km</div>
+              {clickedPoint.prediction.influences?.length === 0 && (
+                <div className="text-center py-4 text-gray-500">
+                  <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Aucune source de pollution détectée à proximité</p>
                 </div>
               )}
             </div>
