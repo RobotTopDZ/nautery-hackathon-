@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
-import { kpiCalculator } from '@/lib/kpi-calculations'
+import { NextRequest, NextResponse } from 'next/server'
+import { kpiCalculator } from '@/lib/kpi-calculations-simple'
 
 export async function GET(request: Request) {
   try {
@@ -22,22 +22,10 @@ export async function GET(request: Request) {
       temporalKPIs,
       governanceKPIs
     ] = await Promise.all([
-      kpiCalculator.calculatePollutionKPIs(
-        moleculeId ? parseInt(moleculeId) : undefined,
-        locationId ? parseInt(locationId) : undefined,
-        timeRange
-      ),
-      kpiCalculator.calculateWaterQualityKPIs(
-        locationId ? parseInt(locationId) : undefined,
-        timeRange
-      ),
-      kpiCalculator.calculateSpatialKPIs(
-        moleculeId ? parseInt(moleculeId) : undefined
-      ),
-      kpiCalculator.calculateTemporalKPIs(
-        moleculeId ? parseInt(moleculeId) : undefined,
-        locationId ? parseInt(locationId) : undefined
-      ),
+      kpiCalculator.calculatePollutionKPIs(),
+      kpiCalculator.calculateWaterQualityKPIs(),
+      kpiCalculator.calculateSpatialKPIs(),
+      kpiCalculator.calculateTemporalKPIs(),
       kpiCalculator.calculateGovernanceKPIs()
     ])
 

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { diffusionModel } from '@/lib/ml-model'
-import { prisma } from '@/lib/prisma'
 
 export async function POST(request: Request) {
   try {

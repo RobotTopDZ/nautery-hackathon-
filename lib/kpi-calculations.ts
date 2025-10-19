@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+// Removed Prisma import for Railway deployment
 
 export interface PollutionKPIs {
   averageConcentration: number
