@@ -2,6 +2,7 @@ import { ToulonGISMap } from '@/components/ToulonGISMap'
 import { MobileNavigation } from '@/components/MobileNavigation'
 import { Navigation } from '@/components/Navigation'
 import { Logo } from '@/components/Logo'
+import { Header } from '@/components/Header'
 
 export default function ToulonPage() {
   return (
@@ -10,24 +11,12 @@ export default function ToulonPage() {
       <Navigation />
       
       <div className="flex-1 lg:ml-0">
-        {/* Header */}
-        <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-40 lg:pl-4">
-          <div className="container mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <Logo size="xl" />
-              <div className="text-right">
-                <h1 className="text-lg md:text-xl font-bold text-primary">
-                  Carte Interactive Toulon
-                </h1>
-                <p className="text-xs md:text-sm text-neutral/70">
-                  Pollution Marine & Stations d'Épuration
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header 
+          title="Carte Interactive Toulon"
+          subtitle="Pollution Marine & Stations d'Épuration"
+        />
 
-        <div className="container mx-auto px-3 md:px-6 py-4 md:py-6 pb-20 md:pb-6">
+        <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 pb-20 md:pb-6">
 
         {/* Interactive Map */}
         <ToulonGISMap />

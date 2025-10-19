@@ -8,6 +8,7 @@ import { RegionSelector, Region, regions } from '@/components/RegionSelector'
 import { MobileNavigation } from '@/components/MobileNavigation'
 import { Navigation } from '@/components/Navigation'
 import { Logo } from '@/components/Logo'
+import { Header } from '@/components/Header'
 import { generateRegionalKPIs, getRegionDisplayInfo } from '@/utils/regionKPIs'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -115,35 +116,16 @@ export default function Dashboard() {
       <Navigation />
       
       <div className="flex-1 lg:ml-0">
-        {/* Header */}
-        <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-40 lg:pl-4">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Logo size="xl" />
-            <div className="flex items-center space-x-4">
-              <div className="hidden md:block text-xs text-neutral/50">
-                Dernière mise à jour: {lastUpdate.toLocaleTimeString()}
-              </div>
-              <Button 
-                onClick={fetchDashboardData} 
-                size="sm" 
-                variant="outline"
-                disabled={loading}
-                className="hidden md:flex"
-              >
-                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                Actualiser
-              </Button>
-              <Button size="sm" className="hidden md:flex">
-                <Download className="h-4 w-4 mr-2" />
-                Exporter
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+        <Header 
+          title="Dashboard Ocean Analytics"
+          subtitle="Surveillance pollution marine en temps réel"
+          showActions={true}
+          onRefresh={fetchDashboardData}
+          loading={loading}
+          lastUpdate={lastUpdate}
+        />
 
-      <div className="container mx-auto px-3 md:px-6 py-4 md:py-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
+        <div className="pt-20 container mx-auto px-3 md:px-6 py-4 md:py-6 pb-20 md:pb-6 space-y-4 md:space-y-6">
         {/* Interactive Region Selector */}
         <section className="mb-6">
           <div className="flex items-center justify-between mb-4">

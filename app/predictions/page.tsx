@@ -8,6 +8,7 @@ import { ArrowLeft, Brain, Target } from 'lucide-react'
 import Link from 'next/link'
 import { Navigation } from '@/components/Navigation'
 import { Logo } from '@/components/Logo'
+import { Header } from '@/components/Header'
 import { MobileNavigation } from '@/components/MobileNavigation'
 
 export default function PredictionsPage() {
@@ -67,24 +68,12 @@ export default function PredictionsPage() {
       <Navigation />
       
       <div className="flex-1 lg:ml-0">
-        {/* Header */}
-        <header className="border-b border-gray-700/50 bg-card/50 backdrop-blur-sm sticky top-0 z-40 lg:pl-4">
-          <div className="container mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <Logo size="xl" />
-              <div className="text-right">
-                <h1 className="text-lg md:text-xl font-bold text-primary">
-                  Prédictions IA
-                </h1>
-                <p className="text-xs md:text-sm text-neutral/70">
-                  Advanced contaminant diffusion modeling & risk assessment
-                </p>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header 
+          title="Prédictions IA"
+          subtitle="Modélisation avancée de diffusion des contaminants"
+        />
 
-        <div className="container mx-auto px-6 py-6">
+        <div className="pt-20 container mx-auto px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Prediction Tool */}
           <div className="lg:col-span-1">
@@ -101,46 +90,6 @@ export default function PredictionsPage() {
               type="line"
             />
 
-            {/* Prediction Scenarios */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Target className="h-5 w-5" />
-                  <span>Prediction Scenarios</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {scenarios.map((scenario, index) => (
-                    <div key={index} className="p-4 bg-card/50 rounded-lg border border-gray-600/50">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-medium text-sm">{scenario.name}</h3>
-                          <p className="text-xs text-neutral/70">{scenario.description}</p>
-                        </div>
-                        <Button size="sm" variant="outline">
-                          Load Scenario
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 text-xs">
-                        <div>
-                          <span className="text-neutral/70">Source:</span>
-                          <div className="font-medium">{scenario.params.sourceConcentration} µg/L</div>
-                        </div>
-                        <div>
-                          <span className="text-neutral/70">Distance:</span>
-                          <div className="font-medium">{scenario.params.distance} km</div>
-                        </div>
-                        <div>
-                          <span className="text-neutral/70">Threshold:</span>
-                          <div className="font-medium">{scenario.params.toxicThreshold} µg/L</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Model Information */}
             <Card>
@@ -158,7 +107,6 @@ export default function PredictionsPage() {
                       <li>• Random Forest Regression (50 estimators)</li>
                       <li>• Physics-based fallback model</li>
                       <li>• 8 input features</li>
-                      <li>• Trained on 1000+ synthetic data points</li>
                     </ul>
                   </div>
                   <div>
