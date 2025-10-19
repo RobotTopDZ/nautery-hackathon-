@@ -180,85 +180,89 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
         const riskColor = parseFloat(prediction.totalConcentration) > 0.1 ? '#ef4444' : 
                          parseFloat(prediction.totalConcentration) > 0.01 ? '#eab308' : '#22c55e'
         
+        // Détection mobile pour adapter la taille
+        const isMobile = window.innerWidth < 768
+        
         const popup = L.popup({
-          maxWidth: 400,
+          maxWidth: isMobile ? 280 : 400,
+          minWidth: isMobile ? 250 : 350,
           className: 'prediction-popup-container',
           closeButton: true,
           autoClose: false,
-          closeOnClick: false
+          closeOnClick: false,
+          autoPan: true,
+          autoPanPadding: [10, 10]
         }).setLatLng(e.latlng).setContent(`
-          <div class="prediction-popup bg-white rounded-xl shadow-2xl border-0 p-4 min-w-[350px] max-w-[400px]">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="text-lg font-bold text-gray-800 flex items-center">
-                <svg class="h-5 w-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="prediction-popup bg-white rounded-lg shadow-xl border-0 p-3 ${isMobile ? 'w-[250px]' : 'min-w-[320px] max-w-[380px]'}">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="${isMobile ? 'text-base' : 'text-lg'} font-bold text-gray-800 flex items-center">
+                <svg class="h-4 w-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
                 Prédiction
               </h3>
-              <div class="px-3 py-1 rounded-full text-xs font-semibold text-white" style="background-color: ${riskColor}">
+              <div class="px-2 py-1 rounded-full text-xs font-semibold text-white" style="background-color: ${riskColor}">
                 ${riskLevel}
               </div>
             </div>
             
-            <div class="space-y-3">
+            <div class="space-y-2">
               <!-- Coordonnées -->
-              <div class="bg-gray-50 rounded-lg p-3">
+              <div class="bg-gray-50 rounded-lg p-2">
                 <div class="text-xs text-gray-500 mb-1">Position GPS</div>
-                <div class="font-mono text-sm text-gray-800">
-                  ${lat.toFixed(6)}°N<br/>
-                  ${lng.toFixed(6)}°E
+                <div class="font-mono text-xs text-gray-800">
+                  ${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E
                 </div>
               </div>
               
               <!-- Concentration totale -->
-              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-3">
-                <div class="text-sm text-gray-600 mb-1">Concentration Prédite</div>
-                <div class="text-2xl font-bold text-blue-600">
-                  ${prediction.totalConcentration} ng/L
+              <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-2">
+                <div class="text-xs text-gray-600 mb-1">Concentration</div>
+                <div class="${isMobile ? 'text-lg' : 'text-xl'} font-bold text-blue-600">
+                  ${parseFloat(prediction.totalConcentration).toFixed(3)} ng/L
                 </div>
-                <div class="text-xs text-gray-500 mt-1">
-                  Basé sur ${prediction.influences?.length || 0} source(s)
+                <div class="text-xs text-gray-500">
+                  ${prediction.influences?.length || 0} source(s)
                 </div>
               </div>
               
               <!-- Sources d'influence -->
               ${prediction.influences?.length > 0 ? `
                 <div>
-                  <div class="text-sm font-semibold text-gray-700 mb-2">Sources d'Influence</div>
-                  <div class="space-y-2 max-h-32 overflow-y-auto">
-                    ${prediction.influences.slice(0, 3).map(influence => `
-                      <div class="bg-white border border-gray-200 rounded-lg p-2 shadow-sm">
-                        <div class="flex justify-between items-start mb-1">
-                          <span class="font-medium text-gray-800 text-sm">${influence.source}</span>
-                          <span class="px-2 py-1 rounded-full text-xs font-semibold ${
-                            influence.level === 'high' ? 'bg-red-100 text-red-800' :
-                            influence.level === 'medium' ? 'bg-orange-100 text-orange-800' :
-                            influence.level === 'low' ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800'
+                  <div class="text-xs font-semibold text-gray-700 mb-1">Sources d'Influence</div>
+                  <div class="space-y-1 max-h-24 overflow-y-auto">
+                    ${prediction.influences.slice(0, 2).map(influence => `
+                      <div class="bg-white border border-gray-200 rounded p-2 text-xs">
+                        <div class="flex justify-between items-center mb-1">
+                          <span class="font-medium text-gray-800 text-xs truncate">${influence.source}</span>
+                          <span class="px-1 py-0.5 rounded text-xs font-semibold ${
+                            influence.level === 'high' ? 'bg-red-100 text-red-700' :
+                            influence.level === 'medium' ? 'bg-orange-100 text-orange-700' :
+                            influence.level === 'low' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
                           }">
                             ${influence.level}
                           </span>
                         </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-600">
-                          <div>Distance: ${influence.distance}m</div>
-                          <div>Impact: ${influence.influence} ng/L</div>
+                        <div class="text-xs text-gray-600">
+                          ${influence.distance}m • ${parseFloat(influence.influence).toFixed(3)} ng/L
                         </div>
                       </div>
                     `).join('')}
-                    ${prediction.influences.length > 3 ? `
-                      <div class="text-xs text-gray-500 text-center">
-                        +${prediction.influences.length - 3} autres sources...
+                    ${prediction.influences.length > 2 ? `
+                      <div class="text-xs text-gray-500 text-center py-1">
+                        +${prediction.influences.length - 2} autres...
                       </div>
                     ` : ''}
                   </div>
                 </div>
               ` : `
-                <div class="text-center py-3 text-gray-500">
-                  <svg class="h-6 w-6 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center py-2 text-gray-500">
+                  <svg class="h-5 w-5 mx-auto mb-1 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                   </svg>
-                  <p class="text-sm">Zone éloignée des sources</p>
+                  <p class="text-xs">Zone éloignée</p>
                 </div>
               `}
             </div>
@@ -1148,41 +1152,167 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
   }
 
   return (
-    <Card className={`${className} ${isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'bg-card/50 border-gray-700/50'}`}>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <MapIcon className="h-5 w-5 text-blue-400" />
-            <span>Carte Interactive Toulon</span>
-            {isFullscreen && (
-              <span className="text-sm text-gray-500 ml-2">- Mode Plein Écran</span>
-            )}
+    <>
+      {/* Mode plein écran pour la carte uniquement */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-white flex flex-col">
+          {/* Header plein écran */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+            <div className="flex items-center space-x-2">
+              <MapIcon className="h-5 w-5 text-blue-400" />
+              <span className="font-semibold">Carte Interactive Toulon - Plein Écran</span>
+            </div>
+            <button
+              onClick={() => setIsFullscreen(false)}
+              className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
           
-          {/* Bouton plein écran pour mobile */}
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="md:hidden p-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-colors flex items-center space-x-1"
-          >
-            {isFullscreen ? (
-              <>
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span className="text-xs">Fermer</span>
-              </>
-            ) : (
-              <>
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
-                </svg>
-                <span className="text-xs">Plein Écran</span>
-              </>
-            )}
-          </button>
-          <Badge className="bg-green-600">Données Géolocalisées</Badge>
-        </CardTitle>
-      </CardHeader>
+          {/* Contrôles en plein écran */}
+          <div className="flex-1 flex">
+            {/* Sidebar contrôles */}
+            <div className="w-80 bg-gray-50 border-r border-gray-200 p-4 overflow-y-auto">
+              <div className="space-y-4">
+                {/* Style de carte */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2 text-gray-700">Style de Carte</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {['satellite', 'street', 'terrain'].map((style) => (
+                      <Button
+                        key={style}
+                        variant={mapStyle === style ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => changeMapStyle(style)}
+                        className="justify-start"
+                      >
+                        {style === 'satellite' && <Satellite className="h-4 w-4 mr-2" />}
+                        {style === 'street' && <MapIcon className="h-4 w-4 mr-2" />}
+                        {style === 'terrain' && <Layers className="h-4 w-4 mr-2" />}
+                        {style.charAt(0).toUpperCase() + style.slice(1)}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Période temporelle */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2 text-gray-700">Période</h4>
+                  <select
+                    value={currentTimeSlot.id}
+                    onChange={(e) => {
+                      const slot = timeSlots.find(s => s.id === e.target.value)
+                      if (slot) setCurrentTimeSlot(slot)
+                    }}
+                    className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  >
+                    {timeSlots.map(slot => (
+                      <option key={slot.id} value={slot.id}>{slot.label}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                {/* Niveau de concentration */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2 text-gray-700">Niveau Pollution</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {(['low', 'medium', 'high'] as const).map((level) => (
+                      <Button
+                        key={level}
+                        variant={concentrationLevel === level ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setConcentrationLevel(level)}
+                        className="justify-start"
+                      >
+                        {level === 'low' && '🟢 Faible'}
+                        {level === 'medium' && '🟡 Moyen'}
+                        {level === 'high' && '🔴 Élevé'}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Couches de données */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2 text-gray-700">Couches</h4>
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={showStations}
+                        onChange={(e) => setShowStations(e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">Stations</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={showPollution}
+                        onChange={(e) => setShowPollution(e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">Pollution</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={showPipelines}
+                        onChange={(e) => setShowPipelines(e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">Canalisations</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={showRejectionDispersion}
+                        onChange={(e) => setShowRejectionDispersion(e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">Dispersion</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={showWindEffect}
+                        onChange={(e) => setShowWindEffect(e.target.checked)}
+                        className="rounded"
+                      />
+                      <span className="text-sm">Effet Vent</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Carte plein écran */}
+            <div className="flex-1 relative">
+              <div 
+                ref={mapRef} 
+                className="w-full h-full"
+                style={{ zIndex: 1 }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Mode normal */}
+      {!isFullscreen && (
+        <Card className={`${className} bg-card/50 border-gray-700/50`}>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <MapIcon className="h-5 w-5 text-blue-400" />
+                <span>Carte Interactive Toulon</span>
+              </div>
+              <Badge className="bg-green-600">Données Géolocalisées</Badge>
+            </CardTitle>
+          </CardHeader>
       <CardContent className="space-y-4">
         {/* Contrôles Mobile-Friendly */}
         <div className="space-y-4">
@@ -1571,6 +1701,8 @@ export function ToulonGISMap({ className }: ToulonGISMapProps) {
           filter: brightness(1.1) saturate(1.2);
         }
       `}</style>
-    </Card>
+        </Card>
+      )}
+    </>
   )
 }
