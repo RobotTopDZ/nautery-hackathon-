@@ -10,7 +10,12 @@ import {
   Factory,
   Shield,
   TrendingUp,
-  Activity
+  TrendingDown,
+  Minus,
+  Activity,
+  ChevronDown,
+  MapPin,
+  Droplets
 } from 'lucide-react'
 
 // Données réelles de Toulon basées sur les stations d'épuration (informations vérifiées)
@@ -885,22 +890,22 @@ Station GAPEAU
         </CardHeader>
         <CardContent>
           {/* Statistiques des risques */}
-          <div className="grid grid-cols-4 gap-4 mb-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-500">{criticalCount}</div>
-              <div className="text-xs text-gray-500">Critique</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="text-center p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+              <div className="text-2xl md:text-3xl font-bold text-red-500">{criticalCount}</div>
+              <div className="text-xs md:text-sm text-gray-400">Critique</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500">{moderateCount}</div>
-              <div className="text-xs text-gray-500">Modéré</div>
+            <div className="text-center p-3 bg-orange-500/10 rounded-lg border border-orange-500/20">
+              <div className="text-2xl md:text-3xl font-bold text-orange-500">{moderateCount}</div>
+              <div className="text-xs md:text-sm text-gray-400">Modéré</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-500">{lowCount}</div>
-              <div className="text-xs text-gray-500">Faible</div>
+            <div className="text-center p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+              <div className="text-2xl md:text-3xl font-bold text-green-500">{lowCount}</div>
+              <div className="text-xs md:text-sm text-gray-400">Faible</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-500">0</div>
-              <div className="text-xs text-gray-500">Très Faible</div>
+            <div className="text-center p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+              <div className="text-2xl md:text-3xl font-bold text-blue-500">0</div>
+              <div className="text-xs md:text-sm text-gray-400">Très Faible</div>
             </div>
           </div>
 
@@ -909,8 +914,14 @@ Station GAPEAU
             {toulonRiskData.map((risk) => (
               <div 
                 key={risk.id} 
-                className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 cursor-pointer transition-colors"
-                onClick={() => setSelectedRisk(selectedRisk?.id === risk.id ? null : risk)}
+                className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 cursor-pointer transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg hover:shadow-blue-500/20 md:hover:scale-100"
+                onClick={() => {
+                  // Feedback tactile pour mobile
+                  if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                  }
+                  setSelectedRisk(selectedRisk?.id === risk.id ? null : risk);
+                }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -918,6 +929,10 @@ Station GAPEAU
                       <Factory className="h-4 w-4 text-blue-400" />
                       <span className="font-medium text-white">{risk.location}</span>
                       {getTrendIcon(risk.trend)}
+                      <div className="ml-auto flex items-center text-blue-400">
+                        <span className="text-xs mr-1 md:hidden">Appuyer pour détails</span>
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${selectedRisk?.id === risk.id ? 'rotate-180' : ''}`} />
+                      </div>
                     </div>
                     <div className="text-sm text-gray-300 mb-2">
                       <strong>{risk.pollutant}</strong>
@@ -941,8 +956,8 @@ Station GAPEAU
 
                 {/* Détails étendus */}
                 {selectedRisk?.id === risk.id && (
-                  <div className="mt-4 pt-4 border-t border-gray-700">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="mt-4 pt-4 border-t border-gray-700 animate-in slide-in-from-top-2 duration-300">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <div className="text-gray-400">Coordonnées Station:</div>
                         <div className="text-gray-300">{risk.coords[0].toFixed(4)}°N, {risk.coords[1].toFixed(4)}°E</div>
